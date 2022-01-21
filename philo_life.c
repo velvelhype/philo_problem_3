@@ -51,12 +51,11 @@ void	take_a_fork(t_status *s, int c)
 {
 	while (1)
 	{
-		if (is_over(s))
-			return ;
-		pthread_mutex_lock(&s->fork_mutex[fork_cnt(c, s->max)]);
-		pthread_mutex_lock(&s->fork_mutex[fork_cnt(c + 1, s->max)]);
+		pre_check(s, c);
 		if (s->forks[fork_cnt(c, s->max)] && s->forks[fork_cnt(c + 1, s->max)])
 		{
+			if (s->max != 3)
+				lock_mutex(s, c);
 			s->forks[fork_cnt(c, s->max)] = 0;
 			s->forks[fork_cnt(c + 1, s->max)] = 0;
 			action("fork", s, c, 0);
@@ -66,12 +65,11 @@ void	take_a_fork(t_status *s, int c)
 			(s->eat_counts[c])++;
 			s->forks[fork_cnt(c, s->max)] = 1;
 			s->forks[fork_cnt(c + 1, s->max)] = 1;
-			pthread_mutex_unlock(&s->fork_mutex[fork_cnt(c, s->max)]);
-			pthread_mutex_unlock(&s->fork_mutex[fork_cnt(c + 1, s->max)]);
+			unlock_mutex(s, c);
 			return ;
 		}
-		pthread_mutex_unlock(&s->fork_mutex[fork_cnt(c, s->max)]);
-		pthread_mutex_unlock(&s->fork_mutex[fork_cnt(c + 1, s->max)]);
+		if (s->max == 3)
+			unlock_mutex(s, c);
 		usleep(100);
 	}
 }

@@ -9,7 +9,6 @@
 typedef struct s_status
 {
 	int				is_dead;
-
 	int				max;
 	int				number;
 	int				time_to_die;
@@ -31,6 +30,10 @@ int		is_over(t_status *s);
 void	*philo_life(void *p);
 size_t	get_time(void);
 int		is_over(t_status *s);
+int		fork_cnt(int fork_number, int max_number);
+void	lock_mutex(t_status *s, int c);
+void	unlock_mutex(t_status *s, int c);
+void	pre_check(t_status *s, int c);
 int		launch(t_status *stat, pthread_t *philos);
 int		are_philos_full(t_status *stat);
 int		are_philos_starved(t_status *stat);
